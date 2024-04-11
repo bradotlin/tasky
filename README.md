@@ -19,6 +19,24 @@ You'll also need to add `SECRET_KEY` to the .env file for JWT Authentication.
 
 Run the command `go run main.go` and the project should run on `locahost:8080`
 
+# Create a Docker Image for use with K8S
+
+Download/git https://github.com/bradotlin/tasky.git
+
+cd into directory
+
+Build Docker image
+
+*  docker build -t tasky --platform=linux/amd64 .
+
+Tag Docker image
+  
+*  docker tag tasky:latest eyembrad/tasky:latest
+
+Push Docker image
+
+*  docker push eyembrad/tasky:latest
+
 # License
 
 This project is licensed under the terms of the MIT license.
