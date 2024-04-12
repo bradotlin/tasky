@@ -22,3 +22,5 @@ Makefile
 deploy
 test
 tmp
+
+.DS_Store
