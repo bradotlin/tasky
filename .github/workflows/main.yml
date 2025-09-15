@@ -26,6 +26,6 @@ jobs:
 
       - name: Deploy manifests
         run: |
-          kubectl apply -f tasky-app.yaml   # folder where your manifests live
+          kubectl apply -f k8s/tasky-app.yaml   # folder where your manifests live
           kubectl rollout restart deployment tasky
           kubectl rollout status deployment/tasky
