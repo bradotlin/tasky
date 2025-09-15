@@ -10,14 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Debug workflow context
-        run: |
-          echo "Workflow: $GITHUB_WORKFLOW"
-          echo "Event: $GITHUB_EVENT_NAME"
-          echo "Workflow file: $GITHUB_WORKFLOW_REF"
-          echo "Ref: $GITHUB_REF"
-          echo "SHA: $GITHUB_SHA"
-
       - name: Checkout repo
         uses: actions/checkout@v4
 
@@ -30,15 +22,26 @@ jobs:
       - name: Build and push Docker image
         run: |
           IMAGE_NAME=eyembrad/tasky
-          IMAGE_TAG=latest
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            IMAGE_TAG=pr-${{ github.event.pull_request.number }}-${{ github.sha }}
+          else
+            IMAGE_TAG=main-${{ github.sha }}
+          fi
+
           echo "Building $IMAGE_NAME:$IMAGE_TAG"
           docker build -t $IMAGE_NAME:$IMAGE_TAG .
           docker push $IMAGE_NAME:$IMAGE_TAG
 
+          # For main pushes, also push :latest for convenience
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
+            docker push $IMAGE_NAME:latest
+          fi
+
   deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: build   # make sure build runs first
+    needs: build   # ensure build finished successfully
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -53,14 +56,15 @@ jobs:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
         with:
-          version: 'latest'
+          version: latest
 
       - name: Build kubeconfig
         run: |
           aws eks update-kubeconfig --region us-east-1 --name my-eks-cluster
 
-      - name: Deploy manifests
+      - name: Deploy manifests (update image)
         run: |
-          kubectl apply -f k8s/tasky-app.yaml
-          kubectl rollout restart deployment tasky
-          kubectl rollout status deployment/tasky
+          IMAGE=eyembrad/tasky:main-${{ github.sha }}
+          echo "Deploying $IMAGE"
+          kubectl set image deployment/tasky tasky=$IMAGE
+          kubectl rollout status deployment/tasky --timeout=120s
