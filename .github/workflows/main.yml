@@ -3,7 +3,7 @@ name: Deploy to Kubernetes
 on:
   push:
     branches:
-      - main   # only run after merge into main
+      - main   ## only run after merge into main
 
 jobs:
   deploy:
