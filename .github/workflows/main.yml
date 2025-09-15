@@ -2,9 +2,13 @@ name: CI/CD to Kubernetes
 
 on:
   pull_request:      # build image for PRs (source branch → main)
+    paths-ignore:
+      - '.github/workflows/**'
   push:              # build image for all branch pushes
     branches:
       - '**'         # match every branch
+    paths-ignore:
+      - '.github/workflows/**'
 
 jobs:
   build:
