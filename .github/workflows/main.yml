@@ -1,10 +1,10 @@
 name: CI/CD to Kubernetes
 
 on:
-  pull_request:    # build image for PRs
-  push:
+  pull_request:      # build image for PRs (source branch → main)
+  push:              # build image for all branch pushes
     branches:
-      - main       # build + deploy on merge to main
+      - '**'         # match every branch
 
 jobs:
   build:
@@ -22,26 +22,32 @@ jobs:
       - name: Build and push Docker image
         run: |
           IMAGE_NAME=eyembrad/tasky
+          
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            # PR build: tag with PR number + SHA
             IMAGE_TAG=pr-${{ github.event.pull_request.number }}-${{ github.sha }}
-          else
+          elif [[ "${{ github.ref }}" == refs/heads/main ]]; then
+            # Main branch: immutable tag + also push latest
             IMAGE_TAG=main-${{ github.sha }}
+            docker build -t $IMAGE_NAME:$IMAGE_TAG .
+            docker push $IMAGE_NAME:$IMAGE_TAG
+            docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
+            docker push $IMAGE_NAME:latest
+            exit 0
+          else
+            # Non-main branch push: tag with branch name + SHA
+            BRANCH=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+            IMAGE_TAG=${BRANCH}-${{ github.sha }}
           fi
-
+          
           echo "Building $IMAGE_NAME:$IMAGE_TAG"
           docker build -t $IMAGE_NAME:$IMAGE_TAG .
           docker push $IMAGE_NAME:$IMAGE_TAG
 
-          # For main pushes, also push :latest for convenience
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
-            docker push $IMAGE_NAME:latest
-          fi
-
   deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: build   # ensure build finished successfully
+    needs: build
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
