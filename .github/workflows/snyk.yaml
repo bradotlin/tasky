@@ -11,18 +11,38 @@ on:
   workflow_dispatch:
 
 jobs:
-  snyk:
+  snyk-node:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Snyk to check for vulnerabilities
+      # Install Node if your repo needs it for lockfile resolution
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Snyk Node Test (PRs)
+        if: github.event_name == 'pull_request'
         uses: snyk/actions/node@master
+        with:
+          command: test
+          args: --all-projects
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
-  
+
+      - name: Snyk Node Monitor (main)
+        if: github.ref == 'refs/heads/main'
+        uses: snyk/actions/node@master
+        with:
+          command: monitor
+          args: --all-projects --report
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
   snyk-go:
     runs-on: ubuntu-latest
     steps:

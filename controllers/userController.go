@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/jeffthorne/tasky/auth"
-	"github.com/jeffthorne/tasky/database"
-	"github.com/jeffthorne/tasky/models"
+	"github.com/bradotlin/tasky/auth"
+	"github.com/bradotlin/tasky/database"
+	"github.com/bradotlin/tasky/models"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

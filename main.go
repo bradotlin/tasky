@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-	controller "github.com/jeffthorne/tasky/controllers"
+	controller "github.com/bradotlin/tasky/controllers"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
