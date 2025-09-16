@@ -33,12 +33,6 @@ jobs:
   snyk-code:
     runs-on: ubuntu-latest
     steps:
-      - name: Debug repo structure
-        run: |
-          pwd
-          ls -lah
-          ls -R assets
-
       - name: Snyk Code Test
         uses: snyk/actions/node@master
         with:
