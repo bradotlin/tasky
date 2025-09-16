@@ -36,7 +36,7 @@ jobs:
       - name: List all tracked JS files
         run: |
           echo "Current directory: $(pwd)"
-          git ls-files "*.js"
+          find . -type f -name "*.js"
 
       - name: Snyk Code Test
         uses: snyk/actions/node@master
