@@ -28,10 +28,9 @@ jobs:
         uses: snyk/actions/golang@master
         with:
           command: test
-          args: --all-projects
+          args: --all-projects --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
 
   snyk-code:
     runs-on: ubuntu-latest
@@ -44,7 +43,6 @@ jobs:
         uses: snyk/actions/node@master
         with:
           command: code
-          args: test assets/js/
+          args: test assets/js/ --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
