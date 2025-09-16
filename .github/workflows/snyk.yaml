@@ -40,12 +40,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: List all tracked JS files
-        run: |
-          echo "Current directory: $(pwd)"
-          find . -type f -name "*.js"
-
       - name: Snyk Code Test
         uses: snyk/actions/node@master
         with:
