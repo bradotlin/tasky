@@ -30,3 +30,14 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
+  snyk-code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Snyk Code Test
+        uses: snyk/actions/node@master
+        with:
+          command: code
+          args: test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
