@@ -11,26 +11,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  snyk-node:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'  # adjust if needed
-
-      - name: Snyk Node Test
-        uses: snyk/actions/node@master
-        with:
-          command: test
-          args: --all-projects
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
-
   snyk-go:
     runs-on: ubuntu-latest
     steps:
