@@ -33,11 +33,16 @@ jobs:
   snyk-code:
     runs-on: ubuntu-latest
     steps:
+      - name: List all tracked JS files
+        run: |
+          echo "Current directory: $(pwd)"
+          git ls-files "*.js"
+
       - name: Snyk Code Test
         uses: snyk/actions/node@master
         with:
           command: code
-          args: test tasky/assets/js/
+          args: test assets/js/
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
