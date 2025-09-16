@@ -17,28 +17,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Install Node if your repo needs it for lockfile resolution
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20'  # adjust if needed
 
-      - name: Snyk Node Test (PRs)
-        if: github.event_name == 'pull_request'
+      - name: Snyk Node Test
         uses: snyk/actions/node@master
         with:
           command: test
           args: --all-projects
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
-
-      - name: Snyk Node Monitor (main)
-        if: github.ref == 'refs/heads/main'
-        uses: snyk/actions/node@master
-        with:
-          command: monitor
-          args: --all-projects --report
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
@@ -49,28 +37,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Setup Go toolchain
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.18' # adjust to match your go.mod
+          go-version: '1.18'  # match your go.mod
 
-      - name: Snyk Go Test (PRs)
-        if: github.event_name == 'pull_request'
+      - name: Snyk Go Test
         uses: snyk/actions/golang@master
         with:
           command: test
           args: --all-projects
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
-
-      - name: Snyk Go Monitor (main)
-        if: github.ref == 'refs/heads/main'
-        uses: snyk/actions/golang@master
-        with:
-          command: monitor
-          args: --all-projects --report
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
