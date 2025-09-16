@@ -33,11 +33,17 @@ jobs:
   snyk-code:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug repo structure
+        run: |
+          pwd
+          ls -lah
+          ls -R assets
+
       - name: Snyk Code Test
         uses: snyk/actions/node@master
         with:
           command: code
-          args: test /assets/js/
+          args: test assets/js/ --debug
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
