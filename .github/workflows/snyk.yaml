@@ -22,3 +22,35 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
+  
+  snyk-go:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup Go toolchain
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.18' # adjust to match your go.mod
+
+      - name: Snyk Go Test (PRs)
+        if: github.event_name == 'pull_request'
+        uses: snyk/actions/golang@master
+        with:
+          command: test
+          args: --all-projects
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+      - name: Snyk Go Monitor (main)
+        if: github.ref == 'refs/heads/main'
+        uses: snyk/actions/golang@master
+        with:
+          command: monitor
+          args: --all-projects --report
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
