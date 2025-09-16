@@ -37,7 +37,7 @@ jobs:
         uses: snyk/actions/node@master
         with:
           command: code
-          args: test assets/js/
+          args: test /assets/js/
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
