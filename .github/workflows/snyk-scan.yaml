@@ -42,7 +42,7 @@ jobs:
         uses: snyk/actions/node@master
         with:
           command: code
-          args: test assets/js/ --severity-threshold=high
+          args: test assets/js/ --severity-threshold=medium
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
