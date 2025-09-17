@@ -32,5 +32,5 @@ spec:
               name: tasky-secret
               key: tasky-password
         - name: MONGODB_URI
-          value: mongodb://mongouser:mongopassword@192.168.1.53:27017/?directConnection=true&serverSelectionTimeoutMS=2000&authSource=admin
+          value: mongodb://mongouser:mongopassword@mongodb:27017/?directConnection=true&serverSelectionTimeoutMS=2000&authSource=admin
 
