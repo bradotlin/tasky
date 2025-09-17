@@ -1,14 +1,16 @@
-name: CI/CD to Kubernetes
+name: Build and Deploy
 
 on:
   pull_request:      # build image for PRs (source branch → main)
     paths-ignore:
       - '.github/workflows/**'
+      - 'app-k8s/**'
   push:              # build image for all branch pushes
     branches:
       - '**'         # match every branch
     paths-ignore:
       - '.github/workflows/**'
+      - 'app-k8s/**'
   workflow_dispatch:
 
 jobs:
