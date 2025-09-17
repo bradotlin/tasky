@@ -48,7 +48,7 @@ spec:
               mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: mongodb-data
-          emptyDir: {}   # dev only — resets DB on restart##
+          emptyDir: {}   # dev only — resets DB on restart
         - name: mongo-init
           configMap:
             name: mongo-init
