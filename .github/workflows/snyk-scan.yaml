@@ -60,7 +60,7 @@ jobs:
           command: test
           args: app-k8s/
 
-  snyk:
+  snyk-container:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
