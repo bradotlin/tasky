@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-init
+data:
+  create-user.js: |
+    db = db.getSiblingDB('admin');
+    db.createUser({
+      user: "mongouser",
+      pwd: "mongopassword",
+      roles: [
+        { role: "readWriteAnyDatabase", db: "admin" },
+        { role: "dbAdminAnyDatabase", db: "admin" },
+        { role: "userAdminAnyDatabase", db: "admin" }
+      ]
+    });
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  labels:
+    app: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:7
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: root
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: rootpassword
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: /data/db
+            - name: mongo-init
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: mongodb-data
+          emptyDir: {}   # dev only — resets DB on restart
+        - name: mongo-init
+          configMap:
+            name: mongo-init
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  type: ClusterIP
